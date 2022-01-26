@@ -41,11 +41,13 @@ const resolvers = {
 
     saveBook: async (parent, { bookData }, context) => {
         if (context.user) {
-          return User.findOneAndUpdate(
+          const user = await User.findOneAndUpdate(
             { _id: context.user._id },
-            { $addToSet: { savedBooks: bookData } },
+            { $push: { savedBooks: bookData } },
             { new: true }
           );
+
+          return user;
         }
         throw new AuthenticationError("Couldn't find user with this id!");
 
@@ -54,17 +56,19 @@ const resolvers = {
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
         // const emailValidate = context.user.email;
-        return User.findOneAndUpdate(
-          { email: context.user.email },
+        const user = await User.findOneAndUpdate(
+          { _id: context.user._id },
           {
             $pull: {
-              savedBook: {
+              savedBooks: {
                 bookId: bookId
               },
             },
           },
           { new: true }
         );
+
+        return user;
       }
       throw new AuthenticationError("You need to be logged in!")
     },
