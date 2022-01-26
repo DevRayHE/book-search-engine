@@ -4,7 +4,7 @@ import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
 
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 // Construct our main GraphQL API endpoint
@@ -27,8 +27,18 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+  // request: (operation) => {
+  //   const token = localStorage.getItem('id_token');
+
+  //   operation.setContext({
+  //     headers: {
+  //       authorization: token ? `Bearer ${token}` : '',
+  //     },
+  //   });
+  // },
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
+  // uri: '/graphql',
 });
 
 function App() {

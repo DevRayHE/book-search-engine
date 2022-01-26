@@ -7,7 +7,7 @@ const resolvers = {
     // get a single user
     me: async (parent, args, context) => {
       if (context.user) {
-        return User.findOne({_id: context.user._id})
+        return await User.findOne({_id: context.user._id})
       } 
       throw new AuthenticationError("Cannot find a user with this id!")
     }
@@ -29,7 +29,7 @@ const resolvers = {
       }
 
       const token = signToken(user);
-      res.json({ token, user });
+      return { token, user };
     },
 
     // Create a new user, sign a token and send it back
